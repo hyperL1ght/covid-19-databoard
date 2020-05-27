@@ -1,0 +1,50 @@
+/* adapted from https://codepen.io/eode9/pen/twkKm */
+
+.cornerribbon{
+    width: 200px;
+    background: #e43;
+    position: absolute;
+    top: 25px;
+    left: -50px;
+    text-align: center;
+    line-height: 50px;
+    letter-spacing: 1px;
+    color: #f0f0f0;
+    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+    cursor: pointer;
+}
+
+.cornerribbon.sticky{
+    position: fixed;
+}
+  
+.cornerribbon.shadow{
+    box-shadow: 0 0 3px rgba(0,0,0,.3);
+}
+
+.cornerribbon.topleft{
+    top: 25px;
+    left: -50px;
+    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+}
+
+.cornerribbon.topright{
+    top: 25px;
+    right: -50px;
+    left: auto;
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+}
+
+.cornerribbon.white{background: #f0f0f0; color: #555;}
+.cornerribbon.black{background: #333;}
+.cornerribbon.grey{background: #999;}
+.cornerribbon.blue{background: #39d;}
+.cornerribbon.green{background: #2c7;}
+.cornerribbon.turquoise{background: #1b9;}
+.cornerribbon.purple{background: #95b;}
+.cornerribbon.red{background: #e43;}
+.cornerribbon.orange{background: #e82;}
+.cornerribbon.yellow{background: #ec0;}
