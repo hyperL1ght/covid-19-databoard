@@ -1,7 +1,35 @@
-# covid-19-databoard
+# covid-19-databoard with React
 
-This repo is a personal project inspired by an [Our World Data (OWD) Visualization](https://ourworldindata.org/grapher/covid-confirmed-cases-since-100th-case). I want to replicate the graph to display a different [data source](https://github.com/CSSEGISandData/COVID-19). At the moment, a static replicate of the OWD graph (core components only) has been created (please see `notebooks` for details). I'm working on building a web app for the fully-functing interactive graph (select countries, change trajectory lines).  
+## Demo
+![](doc_imgs/demo.gif)
 
-OWD built a graphing engine called [owid-grapher](https://github.com/owid/owid-grapher) which uses React.js and Node.js under the hood. What I'm aiming for is less complex. At the moment, I'm thinking of using Vue.js, Express.js, Node.js and maybe MongoDB.
+## Data Source
 
+- [Johns Hopkins CSSE API](https://covid19api.com/)
 
+## Modified from 
+
+- [This repo](https://github.com/adrianhajdin/project_corona_tracker)
+### Modifications:
+
+- Create new handlers to consume a different API that provides daily data for all case status (confirmed, recovered & dead) as oppose to only for confirmed and dead cases. 
+
+- Use line chart exclusively instead of switch to a bar chart of current total cases. The bar char visualizes the info displayed in the cards making it redundant.  
+
+- Allow user to switch between liner and logarithmic scale, add customized y-ticks as neccessary.  
+
+- Remove unused hooks & lift the state up in the component hierarchy, all components uses their parent state. 
+
+- Add a corner ribbon to direct user to the data source (not shown in demo gif). 
+
+## To run locally
+
+1. Clone this branch to your local machine: `git clone -b react-db git@github.com:hyperL1ght/covid-19-databoard.git`
+2. Change to the local repo, run `npm install` to install all required packages
+3. Run `npm start`, the app should automatically open in your default browser
+
+## Todo
+
+- Implement the since-100th-case line plot, static demo using `matplotlib` shown below:
+
+    ![](notebooks/plot.png)
