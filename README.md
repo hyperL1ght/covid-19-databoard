@@ -16,7 +16,7 @@
 
 - Use line chart exclusively instead of switch to a bar chart of current total cases. The bar char visualizes the info displayed in the cards making it redundant.  
 
-- Allow user to switch between liner and logarithmic scale, add customized y-ticks as neccessary.  
+- Allow user to switch between linear and logarithmic scale, add customized y-ticks as neccessary.  
 
 - Remove unused hooks & lift the state up in the component hierarchy, all components uses their parent state. 
 
