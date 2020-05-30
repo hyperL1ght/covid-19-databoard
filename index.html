@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<html>
+    <head>
+        <style>
+            svg{
+                border: 1px solid red;
+            }
+
+            .solid{
+                /* stroke-dasharray: 0,0; */
+                stroke:solid;
+            }
+
+            .dashed{
+                stroke-dasharray: 5,5; 
+            }
+
+        </style>
+    </head>
+    <body>
+        <!-- Create a div where the graph will take place -->
+        <div id="my_dataviz"></div>
+
+        <!-- Load d3.js, d3-fetch &  dataframe.js -->
+        <script src="https://d3js.org/d3.v5.min.js"></script>
+        <script src="https://d3js.org/d3-dsv.v1.min.js"></script>
+        <script src="https://d3js.org/d3-fetch.v1.min.js"></script>
+        <script src="https://gmousse.github.io/dataframe-js/dist/dataframe.js"></script>
+
+        <script>
+
+            var DataFrame = dfjs.DataFrame;
+
+            // import XMLHttpRequest from `XMLHttpRequest`
+
+            const makeLine = (base, fequency, startValue, numDays) => {
+                let range = [...Array(Math.floor(numDays/fequency + 1)).keys()]
+                // return {daysSince: range.map(i => fequency * i), numCases: range.map(i => startValue * Math.pow(base, i))}
+                // d3js expect an array of objects, each object is a point {col1:value, col2:value}
+                return range.map(i => ({daysSince: fequency * i, numCases: startValue * Math.pow(base, i)}))
+
+            }
+            
+            const line2 = makeLine(2, 2, 100, 200)
+            const line3 = makeLine(2, 3, 100, 200)
+            const line5 = makeLine(2, 5, 100, 200)
+            const line10 = makeLine(2, 10, 100, 200)
+
+        </script>
+
+        <script>
+
+            // set the dimensions and margins of the graph
+            var margin = {top: 10, right: 30, bottom: 30, left: 50},
+                width = 700 - margin.left - margin.right,
+                height = 500 - margin.top - margin.bottom;
+            
+            // append the svg object to the body of the page
+            var svg = d3.select("#my_dataviz")
+              .append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+              .append("g")
+                .attr("transform",
+                      "translate(" + margin.left + "," + margin.top + ")");          
+            
+            // define xscale          
+            var xScale = d3.scaleLinear()
+            .domain([0, d3.max(line2, (d) => d.daysSince)]) // input
+            .range([0, width]); // output
+            
+            // define yscale
+            var yScale = d3.scaleLog()
+            .domain([d3.min(line10, (d) => d.numCases), d3.max(line10, (d) => d.numCases)]) // input 
+            .range([height, 0]); // output 
+
+            // define line generator 
+            // https://stackoverflow.com/a/48871932
+            const generateLine = (xScale, yScale) => {
+                return d3.line()
+                .x(d => xScale(d.daysSince))
+                .y(d => yScale(d.numCases))
+            }
+
+            // function that append path to svg element
+            const addLine = (data, svg, line, color='gray', className='dashed') => {
+                svg.append("path")
+                .datum(data)
+                .attr("fill", "none")
+                .attr("stroke", color)
+                .attr("stroke-width", 1.5)
+                .attr("d", line)
+                .attr('class', className)
+            }
+            
+            // start adding component to the svg element
+            // x-axis
+            svg.append('g')
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(xScale)); 
+
+            // y-axis
+            svg.append("g")
+            .call(d3.axisLeft(yScale).ticks(10, "~s"));
+
+            // lines (must add these line first)
+            addLine(line2, svg, generateLine(xScale, yScale))
+            addLine(line3, svg, generateLine(xScale, yScale))
+            addLine(line5, svg, generateLine(xScale, yScale))
+            addLine(line10, svg, generateLine(xScale, yScale))
+
+            const transformData = data => {
+                let modifieddata = data.map((d) => ({date: new Date(d.Date), numCases: d.Confirmed}))  
+                let df = new DataFrame(modifieddata, ['date', 'numCases']);
+                // not chainable
+                df = df.filter(row => row.get('numCases') >= 100)
+                df = df.withColumn('startDate', () => df.getRow(0).get("date"))
+                df = df.withColumn('daysSince', (row) =>  Math.floor(row.get('date') - row.get('startDate')) / 86400000 )
+                df = df.select('date', 'daysSince', 'numCases')
+
+                return df.toCollection()
+            }
+
+            const addCountryLine = (country, color, className) => {
+
+                d3.json(`https://api.covid19api.com/total/country/${country}`)
+                .then(data => {
+                
+                countrydata = transformData(data)
+
+                addLine(countrydata, svg, generateLine(xScale, yScale), color, className)
+
+                console.log(countrydata)
+                
+                }).catch(e => console.log(e))
+
+            }
+
+            addCountryLine('canada', 'red', 'solid')
+            addCountryLine('united-states', 'blue', 'solid')
+
+        </script>
+
+    </body>
+</html>
+
+
+
